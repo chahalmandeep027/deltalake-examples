@@ -5,7 +5,8 @@ import yaml
 
 if __name__ == '__main__':
     current_dir = os.path.abspath(os.path.dirname(__file__))
-    app_config_path = os.path.abspath(current_dir + "/../../../" + "application.yml")
+    app_config_path = os.path.abspath(
+        current_dir + "/../../../" + "application.yml")
     app_secrets_path = os.path.abspath(current_dir + "/../../../" + ".secrets")
 
     conf = open(app_config_path)
@@ -29,7 +30,8 @@ if __name__ == '__main__':
     spark.sparkContext.setLogLevel('ERROR')
 
     current_dir = os.path.abspath(os.path.dirname(__file__))
-    app_config_path = os.path.abspath(current_dir + "/../../../" + "application.yml")
+    app_config_path = os.path.abspath(
+        current_dir + "/../../../" + "application.yml")
     app_secrets_path = os.path.abspath(current_dir + "/../../../" + ".secrets")
 
     conf = open(app_config_path)
@@ -40,11 +42,13 @@ if __name__ == '__main__':
     # Setup spark to use s3
     hadoop_conf = spark.sparkContext._jsc.hadoopConfiguration()
     hadoop_conf.set("fs.s3a.access.key", app_secret["s3_conf"]["access_key"])
-    hadoop_conf.set("fs.s3a.secret.key", app_secret["s3_conf"]["secret_access_key"])
+    hadoop_conf.set("fs.s3a.secret.key",
+                    app_secret["s3_conf"]["secret_access_key"])
 
-    delta_table_path = "s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/schema_enforcement_delta"
+    delta_table_path = "s3a://" + \
+        app_conf["s3_conf"]["s3_bucket"] + "/schema_enforcement_delta"
 
-    step = "all_versions"
+    step = "version"
 
     if step == "all_versions":
         delta_df = DeltaTable.forPath(spark, delta_table_path)
@@ -55,10 +59,10 @@ if __name__ == '__main__':
 
     elif step == "version":
         spark \
-          .read \
-          .format("delta") \
-          .option("versionAsOf", 1) \
-          .load(delta_table_path) \
-          .show()
+            .read \
+            .format("delta") \
+            .option("versionAsOf", 1) \
+            .load(delta_table_path) \
+            .show()
 
 # spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4,io.delta:delta-core_2.11:0.6.0" com/dsm/delta/time_travel_demo.py
