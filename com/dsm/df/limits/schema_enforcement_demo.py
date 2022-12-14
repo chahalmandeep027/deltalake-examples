@@ -14,8 +14,10 @@ if __name__ == '__main__':
     spark.sparkContext.setLogLevel('ERROR')
 
     current_dir = os.path.abspath(os.path.dirname(__file__))
-    app_config_path = os.path.abspath(current_dir + "/../../../../" + "application.yml")
-    app_secrets_path = os.path.abspath(current_dir + "/../../../../" + ".secrets")
+    app_config_path = os.path.abspath(
+        current_dir + "/../../../../" + "application.yml")
+    app_secrets_path = os.path.abspath(
+        current_dir + "/../../../../" + ".secrets")
 
     conf = open(app_config_path)
     app_conf = yaml.load(conf, Loader=yaml.FullLoader)
@@ -25,17 +27,19 @@ if __name__ == '__main__':
     # Setup spark to use s3
     hadoop_conf = spark.sparkContext._jsc.hadoopConfiguration()
     hadoop_conf.set("fs.s3a.access.key", app_secret["s3_conf"]["access_key"])
-    hadoop_conf.set("fs.s3a.secret.key", app_secret["s3_conf"]["secret_access_key"])
+    hadoop_conf.set("fs.s3a.secret.key",
+                    app_secret["s3_conf"]["secret_access_key"])
 
-    df_path = "s3a://" + app_conf["s3_conf"]["s3_bucket"] + "/schema_enforcement"
+    df_path = "s3a://" + \
+        app_conf["s3_conf"]["s3_bucket"] + "/schema_enforcement"
 
-    step = "overwrite"
+    step = "append"
     if step == "overwrite":
         data = sc.parallelize([
             ("Brazil",  2011, 22.029),
             ("India", 2006, 24.73)
-          ]) \
-          .toDF(["country", "year", "temperature"])
+        ]) \
+            .toDF(["country", "year", "temperature"])
         data.printSchema()
         data.show()
         print("Writing data..")
@@ -52,7 +56,7 @@ if __name__ == '__main__':
     elif step == "append":
         new_data = sc.parallelize([
             ("Australia", 2019.0, 30.0)
-            ]) \
+        ]) \
             .toDF(["country", "year", "temperature"])
         new_data.printSchema()
         new_data.show()
