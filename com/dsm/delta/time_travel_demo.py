@@ -61,8 +61,8 @@ if __name__ == '__main__':
         spark \
             .read \
             .format("delta") \
-            .option("versionAsOf", 1) \
-            .load(delta_table_path) \
+            .option("versionAsOf", 2
+            .load(delta_table_path)
             .show()
 
 # spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4,io.delta:delta-core_2.11:0.6.0" com/dsm/delta/time_travel_demo.py
